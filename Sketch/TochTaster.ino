@@ -9,70 +9,61 @@
 #include <DallasTemperature.h>
 
 #define NightLED D0
-#define TestLED LED_BUILTIN
+#define ONE_WIRE_BUS D3
+#define HelligkeitsSensor A0
+
 OneButton button1(D1, false);
 OneButton button2(D2, false);
 OneButton button3(D5, false);
 OneButton button4(D6, false);
 OneButton button5(D7, false);
-#define ONE_WIRE_BUS D3
+
 
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
-boolean Taster01status=false;
-boolean Taster02status=false;
-boolean Taster03status=false;
-boolean Taster04status=false;
-boolean Taster05status=false;
-
-
 const char* SSID = "SSID";
-const char* PSK = "PASSWORD";
+const char* PSK = "Password";
 const char* MQTT_BROKER = "MQTT_IP";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
+
 int value = 0;
+int sensorWert = 0;
 
 void setup()
 {
 pinMode(NightLED, OUTPUT);
-pinMode(LED_BUILTIN, OUTPUT);
 
     Serial.begin(115200);
     setup_wifi();
     client.setServer(MQTT_BROKER, 1882);
     client.setCallback(callback);
-    sensors.begin(); // Start up the library
+    sensors.begin();
 
-  // link the button 1 functions.
   button1.attachClick(click1);
   button1.attachDoubleClick(doubleclick1);
   button1.attachLongPressStop(longPressStop1);
   button1.attachDuringLongPress(longPress1);
 
-  // link the button 2 functions.
   button2.attachClick(click2);
   button2.attachDoubleClick(doubleclick2);
   button2.attachLongPressStop(longPressStop2);
   button2.attachDuringLongPress(longPress2);
 
-   // link the button 1 functions.
   button3.attachClick(click3);
   button3.attachDoubleClick(doubleclick3);
   button3.attachLongPressStop(longPressStop3);
   button3.attachDuringLongPress(longPress3);
 
-  // link the button 2 functions.
   button4.attachClick(click4);
   button4.attachDoubleClick(doubleclick4);
   button4.attachLongPressStop(longPressStop4);
   button4.attachDuringLongPress(longPress4);
 
-    // link the button 2 functions.
   button5.attachClick(click5);
   button5.attachDoubleClick(doubleclick5);
   button5.attachLongPressStop(longPressStop5);
@@ -82,7 +73,7 @@ pinMode(LED_BUILTIN, OUTPUT);
 void setup_wifi() {
     delay(10);
     Serial.println();
-    Serial.print("Connecting to ");
+    Serial.print("Verbinde zu ");
     Serial.println(SSID);
  
     WiFi.begin(SSID, PSK);
@@ -93,29 +84,49 @@ void setup_wifi() {
     }
  
     Serial.println("");
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
+    Serial.println("WiFi verbunden");
+    Serial.println("IP Adresse: ");
     Serial.println(WiFi.localIP());
 }
 
 
 void reconnect() {
     while (!client.connected()) {
-        Serial.println("Reconnecting MQTT...");
+        Serial.println("Verbinde MQTT Server...");
         if (!client.connect("ESP8266Client")) {
-            Serial.print("failed, rc=");
+            Serial.print("MQTT Verbindung nicht moeglich=");
             Serial.print(client.state());
-            Serial.println(" retrying in 5 seconds");
+            Serial.println(" versuche erneut in 5 sekunden");
+            digitalWrite(NightLED, HIGH);
+            delay(100);
+            digitalWrite(NightLED, LOW);
+            delay(100);
+            digitalWrite(NightLED, HIGH);
+            delay(100);
+            digitalWrite(NightLED, LOW);
             delay(5000);
         }
     }
     client.subscribe("/home/data");
-    Serial.println("MQTT Connected...");
+    Serial.println("MQTT Server verbunden...");
+    digitalWrite(NightLED, HIGH);
+    delay(250);
+    digitalWrite(NightLED, LOW);
+    delay(250);
+    digitalWrite(NightLED, HIGH);
+    delay(250);
+    digitalWrite(NightLED, LOW);
+    delay(250);
+    digitalWrite(NightLED, HIGH);
+    delay(250);
+    digitalWrite(NightLED, LOW);
+
+    Serial.println("Initzialisierung abgeschlossen");
 }
 
 
 void callback(char* topic, byte* payload, unsigned int length) {
-    Serial.print("Received message [");
+    Serial.print("Empfangene Nachricht [");
     Serial.print(topic);
     Serial.print("] ");
     char msg[length+1];
@@ -149,7 +160,9 @@ void loop()
   button3.tick();
   button4.tick();
   button5.tick();
-delay(10);
+  delay(10);
+  
+  (sensor);
 }
 
 
@@ -312,4 +325,16 @@ void longPressStop5() {
   client.publish("/home/touchtaster/5", "4");
   delay(500);
   client.publish("/home/touchtaster/5", "0");
+}
+
+//Sensordaten abfragen
+void sensor()
+{
+  sensorWert =analogRead(HelligkeitsSensor);
+  Serial.print("Sensorwert = " );
+  Serial.println(sensorWert); 
+  
+  sensors.requestTemperatures();
+  Serial.println("Temperature is: " + String(sensors.getTempCByIndex(0)) + "°C");
+  delay(30000);
 }
