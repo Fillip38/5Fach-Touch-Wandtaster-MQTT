@@ -1,0 +1,315 @@
+//Sketch fuer 5-fach Wandtaster mit Temperaturmessung und Orientierungslicht. Gesteuert ueber MQTT
+//Doppelklick funktion hinzugefuegt per OneButton.h - https://github.com/mathertel/OneButton
+//Temperaturmessung mit MQTT Versand noch nicht nicht komplett 
+//OrientiergunsLED ueber MQTT schaltbar
+#include "OneButton.h"
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+#define NightLED D0
+#define TestLED LED_BUILTIN
+OneButton button1(D1, false);
+OneButton button2(D2, false);
+OneButton button3(D5, false);
+OneButton button4(D6, false);
+OneButton button5(D7, false);
+#define ONE_WIRE_BUS D3
+
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+
+boolean Taster01status=false;
+boolean Taster02status=false;
+boolean Taster03status=false;
+boolean Taster04status=false;
+boolean Taster05status=false;
+
+
+const char* SSID = "LauLip";
+const char* PSK = "Fillip2807";
+const char* MQTT_BROKER = "192.168.19.9";
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+long lastMsg = 0;
+char msg[50];
+int value = 0;
+
+void setup()
+{
+pinMode(NightLED, OUTPUT);
+pinMode(LED_BUILTIN, OUTPUT);
+
+    Serial.begin(115200);
+    setup_wifi();
+    client.setServer(MQTT_BROKER, 1882);
+    client.setCallback(callback);
+    sensors.begin(); // Start up the library
+
+  // link the button 1 functions.
+  button1.attachClick(click1);
+  button1.attachDoubleClick(doubleclick1);
+  button1.attachLongPressStop(longPressStop1);
+  button1.attachDuringLongPress(longPress1);
+
+  // link the button 2 functions.
+  button2.attachClick(click2);
+  button2.attachDoubleClick(doubleclick2);
+  button2.attachLongPressStop(longPressStop2);
+  button2.attachDuringLongPress(longPress2);
+
+   // link the button 1 functions.
+  button3.attachClick(click3);
+  button3.attachDoubleClick(doubleclick3);
+  button3.attachLongPressStop(longPressStop3);
+  button3.attachDuringLongPress(longPress3);
+
+  // link the button 2 functions.
+  button4.attachClick(click4);
+  button4.attachDoubleClick(doubleclick4);
+  button4.attachLongPressStop(longPressStop4);
+  button4.attachDuringLongPress(longPress4);
+
+    // link the button 2 functions.
+  button5.attachClick(click5);
+  button5.attachDoubleClick(doubleclick5);
+  button5.attachLongPressStop(longPressStop5);
+  button5.attachDuringLongPress(longPress5);
+}
+
+void setup_wifi() {
+    delay(10);
+    Serial.println();
+    Serial.print("Connecting to ");
+    Serial.println(SSID);
+ 
+    WiFi.begin(SSID, PSK);
+ 
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+ 
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+}
+
+
+void reconnect() {
+    while (!client.connected()) {
+        Serial.println("Reconnecting MQTT...");
+        if (!client.connect("ESP8266Client")) {
+            Serial.print("failed, rc=");
+            Serial.print(client.state());
+            Serial.println(" retrying in 5 seconds");
+            delay(5000);
+        }
+    }
+    client.subscribe("/home/data");
+    Serial.println("MQTT Connected...");
+}
+
+
+void callback(char* topic, byte* payload, unsigned int length) {
+    Serial.print("Received message [");
+    Serial.print(topic);
+    Serial.print("] ");
+    char msg[length+1];
+    for (int i = 0; i < length; i++) {
+        Serial.print((char)payload[i]);
+        msg[i] = (char)payload[i];
+    }
+    Serial.println();
+ 
+    msg[length] = '\0';
+    Serial.println(msg);
+ 
+    if(strcmp(msg,"on")==0){
+        digitalWrite(NightLED, HIGH);
+        client.publish("/home/touchtaster/LED", "on");
+    }
+    else if(strcmp(msg,"off")==0){
+        digitalWrite(NightLED, LOW);
+        client.publish("/home/touchtaster/LED", "off");
+    }
+}
+
+void loop()
+{
+      if (!client.connected()) {
+        reconnect();
+    }
+    client.loop();
+  button1.tick();
+  button2.tick();
+  button3.tick();
+  button4.tick();
+  button5.tick();
+delay(10);
+}
+
+
+// click1
+void click1() {
+  Serial.println("Button 1 click.");
+  client.publish("/home/touchtaster/1", "1");
+  delay(500);
+  client.publish("/home/touchtaster/1", "0");
+} 
+
+// doubleclick1
+void doubleclick1() {
+  Serial.println("Button 1 doubleclick.");
+  client.publish("/home/touchtaster/1", "2");
+  delay(500);
+  client.publish("/home/touchtaster/1", "0");
+} 
+
+// longPress1
+void longPress1() {
+  Serial.println("Button 1 longPress...");
+  client.publish("/home/touchtaster/1", "3");
+  delay(500);
+  client.publish("/home/touchtaster/1", "0");
+} 
+
+// longPressStop1
+void longPressStop1() {
+  Serial.println("Button 1 longPress stop");
+  client.publish("/home/touchtaster/1", "4");
+  delay(500);
+  client.publish("/home/touchtaster/1", "0");
+} 
+
+
+// click2
+void click2() {
+  Serial.println("Button 2 click.");
+  client.publish("/home/touchtaster/2", "1");
+  delay(500);
+  client.publish("/home/touchtaster/2", "0");
+} 
+
+// doubleclick2
+void doubleclick2() {
+  Serial.println("Button 2 doubleclick.");
+  client.publish("/home/touchtaster/2", "2");
+  delay(500);
+  client.publish("/home/touchtaster/2", "0");
+} 
+
+// longPress2
+void longPress2() {
+  Serial.println("Button 2 longPress...");
+  client.publish("/home/touchtaster/2", "3");
+  delay(500);
+  client.publish("/home/touchtaster/2", "0");
+} 
+
+// longPressStop2
+void longPressStop2() {
+  Serial.println("Button 2 longPress stop");
+  client.publish("/home/touchtaster/2", "4");
+  delay(500);
+  client.publish("/home/touchtaster/2", "0");
+}
+
+// click3
+void click3() {
+  Serial.println("Button 3 click.");
+  client.publish("/home/touchtaster/3", "1");
+  delay(500);
+  client.publish("/home/touchtaster/3", "0");
+} 
+
+// doubleclick3
+void doubleclick3() {
+  Serial.println("Button 3 doubleclick.");
+  client.publish("/home/touchtaster/3", "2");
+  delay(500);
+  client.publish("/home/touchtaster/3", "0");
+} 
+
+// longPress3
+void longPress3() {
+  Serial.println("Button 3 longPress...");
+  client.publish("/home/touchtaster/3", "3");
+  delay(500);
+  client.publish("/home/touchtaster/3", "0");
+} 
+
+// longPressStop3
+void longPressStop3() {
+  Serial.println("Button 3 longPress stop");
+  client.publish("/home/touchtaster/3", "4");
+  delay(500);
+  client.publish("/home/touchtaster/3", "0");
+}
+
+// click4
+void click4() {
+  Serial.println("Button 4 click.");
+  client.publish("/home/touchtaster/4", "1");
+  delay(500);
+  client.publish("/home/touchtaster/4", "0");
+} 
+
+// doubleclick4
+void doubleclick4() {
+  Serial.println("Button 4 doubleclick.");
+  client.publish("/home/touchtaster/4", "2");
+  delay(500);
+  client.publish("/home/touchtaster/4", "0");
+} 
+
+// longPress4
+void longPress4() {
+  Serial.println("Button 4 longPress...");
+  client.publish("/home/touchtaster/4", "3");
+  delay(500);
+  client.publish("/home/touchtaster/4", "0");
+} 
+
+// longPressStop4
+void longPressStop4() {
+  Serial.println("Button 4 longPress stop");
+  client.publish("/home/touchtaster/4", "4");
+  delay(500);
+  client.publish("/home/touchtaster/4", "0");
+}
+
+// click5
+void click5() {
+  Serial.println("Button 5 click.");
+  client.publish("/home/touchtaster/5", "1");
+  delay(500);
+  client.publish("/home/touchtaster/5", "0");
+} 
+
+// doubleclick5
+void doubleclick5() {
+  Serial.println("Button 5 doubleclick.");
+  client.publish("/home/touchtaster/5", "2");
+  delay(500);
+  client.publish("/home/touchtaster/5", "0");
+} 
+
+// longPress5
+void longPress5() {
+  Serial.println("Button 5 longPress...");
+  client.publish("/home/touchtaster/5", "3");
+  delay(500);
+  client.publish("/home/touchtaster/5", "0");
+} 
+
+// longPressStop5
+void longPressStop5() {
+  Serial.println("Button 5 longPress stop");
+  client.publish("/home/touchtaster/5", "4");
+  delay(500);
+  client.publish("/home/touchtaster/5", "0");
+}
