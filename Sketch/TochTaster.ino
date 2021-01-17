@@ -27,9 +27,9 @@ boolean Taster04status=false;
 boolean Taster05status=false;
 
 
-const char* SSID = "LauLip";
-const char* PSK = "Fillip2807";
-const char* MQTT_BROKER = "192.168.19.9";
+const char* SSID = "SSID";
+const char* PSK = "PASSWORD";
+const char* MQTT_BROKER = "MQTT_IP";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
