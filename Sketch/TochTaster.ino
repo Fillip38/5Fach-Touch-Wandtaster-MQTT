@@ -26,6 +26,7 @@ const char* SSID = "SSID";
 const char* PSK = "Password";
 const char* MQTT_BROKER = "MQTT_IP";
 
+
 WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
@@ -162,7 +163,7 @@ void loop()
   button5.tick();
   delay(10);
   
-  (sensor);
+ sensor();
 }
 
 
@@ -336,5 +337,4 @@ void sensor()
   
   sensors.requestTemperatures();
   Serial.println("Temperature is: " + String(sensors.getTempCByIndex(0)) + "°C");
-  delay(30000);
-}
+ }
