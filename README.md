@@ -4,7 +4,7 @@
 ## # Projekt ist aktuell noch im Aufbau! Ziel ist es, einen 5-Fach Touch Wandtaster mit verschiedenen fuktionen zu erstellen. Angelehnt an dem [Glastaster von Loxone](https://shop.loxone.com/dede/touch-pure-tree-weiss.html). 
 _Das ganze ist auch mein erstes Projekt was Arduino Sketche schreiben angeht, da wird sicher noch viel potenzial drinnen sein zwecks Optimierung_
 
-###Aktueller Stand
+Aktueller Stand: 17.01.2020
 * WiFi Einbindung
 * MQTT Einbindung
 * Einbindung der Doppelklick funktion mittels [OneButton](https://github.com/mathertel/OneButton)
