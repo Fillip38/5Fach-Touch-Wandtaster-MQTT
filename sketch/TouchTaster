@@ -8,10 +8,10 @@
 #include <PubSubClient.h>
 #include <Adafruit_NeoPixel.h>
 
-#define MPR121PIN     D3                //MPR121 an Pin
+#define MPR121PIN     D3                //MPR121 IRQ an Pin - SCL und SDA werden an D1 und D2 angeschlossen
 #define LEDPIN        D5                //WS2812 LED Pin
 #define NUMPIXELS     1                 //Anzahl der LEDs
-#define numElectrodes 5                 // Anzahl Touchpunkte
+#define numElectrodes 5                 //Anzahl Touchpunkte
 
 const uint32_t BAUD_RATE = 9600;
 const uint8_t MPR121_ADDR = 0x5A;
@@ -22,8 +22,8 @@ const char* SSID = "SSID";
 const char* PSK = "PASSWORD";
 const char* HOSTNAME = "TouchTasterTest";
 
-const char* MQTT_BROKER = "192.168.19.9";
-const char* MQTT_TOPIC = "/SmartHome/EG/Test/Touchtaster/";
+const char* MQTT_BROKER = "MQTT-BROKER-IPADRESSE";
+const char* MQTT_TOPIC = "/SmartHome/EG/Test/Touchtaster/";   //Topic muss (aktuell) im Gesamten Sketch ausgetauscht / angepasst werden!
 
 
 WiFiClient espClient;
@@ -38,13 +38,13 @@ void setup () {
   Serial.begin (9600);
   Serial.println("TouchTaster v2.1");
 
-  MPR121.begin(0x5a);             // MPR121 Kapazitiv Touch mit Adresse 0x5a initialisieren
-  MPR121.setInterruptPin(MPR121PIN);      // MPR121 Kapazitiv Touch Interrupt Pin definieren
-  MPR121.setTouchThreshold(25);   // Schwellwert erkennen von Berührung
-  MPR121.setReleaseThreshold(20); // Schwellwert erkennen loslassen, muss kleiner sein als Berührung
-  MPR121.updateTouchData();       // Touch Daten aktualisieren
+  MPR121.begin(0x5a);                       // MPR121 Kapazitiv Touch mit Adresse 0x5a initialisieren
+  MPR121.setInterruptPin(MPR121PIN);        // MPR121 Kapazitiv Touch Interrupt Pin definieren
+  MPR121.setTouchThreshold(25);             // Schwellwert erkennen von Berührung
+  MPR121.setReleaseThreshold(20);           // Schwellwert erkennen loslassen, muss kleiner sein als Berührung
+  MPR121.updateTouchData();                 // Touch Daten aktualisieren
 
-  pixels.begin();                 // Initialisierung der NeoPixel
+  pixels.begin();                           // Initialisierung der NeoPixel
 
   setup_wifi();
   client.setServer(MQTT_BROKER, 1883);
