@@ -16,7 +16,7 @@ Die Status LED leuchtet bei jeder Berührung grün und nach kurzer Zeit des Los 
 
 Das NodeRed Skript wertet aktuell 1,2 und 3 Klicks / Berührungen aus, lässt sich aber beliebig erweitern. 
 
-Video zum Projekt: https://youtu.be/Ud2VOEHDUb8
+Video zum Projekt: https://youtu.be/CV--ynpiq84
 
 To-Do:
 - Teileliste beifügen
