@@ -15,7 +15,7 @@
 
 const uint32_t BAUD_RATE = 9600;
 const uint8_t MPR121_ADDR = 0x5A;
-const uint8_t MPR121_INT = D3;        //IRQ Pin
+const uint8_t MPR121_INT = MPR121PIN;        //IRQ Pin
 const bool MPR121_DATASTREAM_ENABLE = false;
 
 const char* SSID = "SSID";
