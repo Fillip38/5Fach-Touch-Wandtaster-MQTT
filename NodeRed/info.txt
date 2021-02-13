@@ -1,0 +1,1 @@
+Ich habe zur besseren Übersicht die Taster-Auswertung einen Subflow erstellt. Das vereinfacht auch die Bearbeitung wenn später etwas geändert werden muss / sollte.
