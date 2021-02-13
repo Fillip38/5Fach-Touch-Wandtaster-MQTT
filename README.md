@@ -18,4 +18,3 @@ Das NodeRed Skript wertet aktuell 1,2 und 3 Klicks / Berührungen aus, lässt si
 
 To-Do:
 - Teileliste beifügen
-- Verdrahtungsplan erstellen / beifügen 
