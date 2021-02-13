@@ -15,3 +15,7 @@ Die Daten der Berührung werden per MQTT an NodeRed gesendet und dort ausgewerte
 Die Status LED leuchtet bei jeder Berührung grün und nach kurzer Zeit des Los lassen's wird diese blau. Die Farben lassen sich auch einstellen. Auch das läuft über MQTT.
 
 Das NodeRed Skript wertet aktuell 1,2 und 3 Klicks / Berührungen aus, lässt sich aber beliebig erweitern. 
+
+To-Do:
+- Teileliste beifügen
+- Verdrahtungsplan erstellen / beifügen 
