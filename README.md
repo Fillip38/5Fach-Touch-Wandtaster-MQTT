@@ -20,3 +20,5 @@ Video zum Projekt: https://youtu.be/CV--ynpiq84
 
 To-Do:
 - Teileliste beifügen
+
+In Version 3 welche dank MubiTec (https://github.com/MubiTec) angepasst wurde, werden die Tasterberührungen nun direkt auf dem WeMos / Gerät ausgewertet mittels OneButton. Dabei werden auch Longpresses ausgewertet und man spart sich den "Umweg" über NodeRed. Vielen dank!
